@@ -65,7 +65,23 @@ The goal of this project is to develop a sentiment analysis model that classifie
 3. **Data Augmentation**: Use data augmentation techniques to increase the robustness of the model.
 4. **Deployment**: Deploy the trained model as a web application using Flask or FastAPI for real-world usage.
 
----
+![image alt](https://github.com/Shreyas745/CODTECH-TASK-1/blob/4277294465baff426da16da4f1788caa502dc8cd/Screenshot%202024-12-30%20200551.png)
 
-This project provides an end-to-end framework for text-based sentiment analysis, with flexibility to explore advanced techniques and models.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
