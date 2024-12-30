@@ -1,0 +1,70 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, accuracy_score
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+from tensorflow.keras.datasets import imdb
+
+# Load IMDb dataset with a vocabulary size limit
+vocab_size = 10000
+(X_train, y_train), (X_test, y_test) = imdb.load_data(num_words=vocab_size)
+
+# Convert integer sequences back to text for readability
+word_index = imdb.get_word_index()
+index_to_word = {index + 3: word for word, index in word_index.items()}
+index_to_word[0], index_to_word[1], index_to_word[2] = "<PAD>", "<START>", "<UNK>"
+
+def decode_review(sequence):
+    return " ".join([index_to_word.get(i, "?") for i in sequence])
+
+# Example decoded review
+print(decode_review(X_train[0]))
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+
+max_length = 200  # Maximum review length
+X_train = pad_sequences(X_train, maxlen=max_length, padding='post')
+X_test = pad_sequences(X_test, maxlen=max_length, padding='post')
+# Convert integer sequences back to text for training
+decoded_X_train = [" ".join([index_to_word.get(i, "?") for i in review]) for review in X_train]
+decoded_X_test = [" ".join([index_to_word.get(i, "?") for i in review]) for review in X_test]
+
+# Vectorize text data
+vectorizer = TfidfVectorizer(max_features=5000, stop_words="english")
+X_train_tfidf = vectorizer.fit_transform(decoded_X_train)
+X_test_tfidf = vectorizer.transform(decoded_X_test)
+
+# Train a logistic regression model
+model = LogisticRegression(max_iter=1000)
+model.fit(X_train_tfidf, y_train)
+
+# Evaluate the model
+y_pred = model.predict(X_test_tfidf)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print(classification_report(y_test, y_pred))
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Embedding, LSTM, Dense, Dropout
+
+# Build LSTM model
+embedding_dim = 32
+
+model = Sequential([
+    Embedding(vocab_size, embedding_dim, input_length=max_length),
+    LSTM(64, dropout=0.2, recurrent_dropout=0.2),
+    Dense(1, activation='sigmoid')
+])
+
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+model.summary()
+
+# Train the model
+model.fit(X_train, y_train, epochs=5, batch_size=64, validation_split=0.2)
+
+# Evaluate the model
+loss, accuracy = model.evaluate(X_test, y_test)
+print("Test Accuracy:", accuracy)
