@@ -69,7 +69,7 @@ The goal of this project is to develop a sentiment analysis model that classifie
 
 
 
-
+![image alt](https://github.com/Shreyas745/CODTECH-TASK-1/blob/ee0bacb93e411004dbad81f78e65c7fdfc38345d/Screenshot%202024-12-30%20200700.png)
 
 
 
